@@ -1,16 +1,16 @@
-from flask import render_template, redirect, url_for, request, sessoin, flash
+from flask import render_template, redirect, url_for, request, session, flash
 from veronica import app
 from twilio.twiml.voice_response import VoiceResponse
 
 from veronica.view_helpers import twiml
 
 @app.route('/')
-@app.route('veronica')
+@app.route('/veronica')
 def home():
     return render_template('index.html')
 
 
-@app.route('veronica/welcome'. methods=['POST'])
+@app.route('/veronica/welcome', methods=['POST'])
 def welcome():
     response = VoiceResponse()
     with response.gather(numDigits=1,
@@ -19,7 +19,7 @@ def welcome():
         g.play(url="http://howtodocs.s3.amazonaws.com/et-phone.mp3", loop=3)
     return twiml(response)
 
-@app.route('veronica/menu', methods=['POST'])
+@app.route('/veronica/menu', methods=['POST'])
 def menu():
     selected_option = request.form['Digits']
     option_actions = {'1': _give_instructions,
@@ -33,7 +33,7 @@ def menu():
     return _redirect_welcome()
 
 
-@app.route('veronica/planets')
+@app.route('/veronica/planets')
 def planets():
     selected_option = request.form['Digits']
     option_actions = {'2': '+12024173378',

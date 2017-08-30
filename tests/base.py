@@ -2,7 +2,7 @@ from veronica import app, configure_app
 from flask.ext.testing import TestCase
 
 
-class BaseTestClass(TestCase):
+class BaseTestCase(TestCase):
     render_templates = False
 
     def create_app(self):
