@@ -59,6 +59,11 @@ def _give_instructions(response):
                  "Soon you will see the mother ship.",
                  voice='Alice',
                  language='en-GB')
+    response.say("Thank you for calling the ET Phone Home Service - the " +
+                 "adventurous alien's first choice in intergalactic travel")
+    response.hangup()
+    return response
+
 
 
 def _list_planets(response):
