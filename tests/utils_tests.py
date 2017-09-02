@@ -15,7 +15,23 @@ class UtilsTests(unittest.TestCase):
         self.assertEqual(sut, None)
 
     def test_get_fancy_date_gives_you_something_fancy(self):
-        """utils - given a date, fancy date gives you fancy"""
+        """utils - given a date, get_fancy_date gives you fancy"""
         sut = utils.get_fancy_date(datetime.datetime(1967, 9, 30, 0, 0))
         expected = 'September 30, 1967'
+        self.assertEqual(sut, expected)
+
+    def test_get_age_returns_elaborate_age_string(self):
+        """utils - a valid age returns an elaborate age string"""
+        today = datetime.datetime(2017, 1, 1, 0, 0)
+        birthdate = datetime.datetime(1967, 9, 30, 0, 0)
+        sut = utils.get_age(birthdate, today)
+        expected = "49 years old"
+        self.assertEqual(sut, expected)
+
+    def test_get_age_returns_error_message_when_given_invalid_date(self):
+        """utils - invalid age returns an error string"""
+        today = datetime.datetime(2017, 1, 1, 0, 0)
+        birthdate = 'foo'
+        sut = utils.get_age(birthdate, today)
+        expected = "I cannot tell how old"
         self.assertEqual(sut, expected)
