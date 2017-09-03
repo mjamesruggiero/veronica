@@ -34,19 +34,8 @@ class ViewsTests(BaseTestCase):
         twiml = ElementTree.fromstring(response.data)
 
         logging.debug("twiml is {}".format(response.data))
-        assert len(twiml.findall("./Say")) == 2
+        assert len(twiml.findall("./Say")) == 1
         assert not twiml.findall("./Hangup") is None
-
-    def test_post_to_menu_with_digit_2_should_serve_twiml_with_gather_and_say(self):
-        """views - post to menu with 2 serves gather and say"""
-        response = self.client.post('/veronica/menu',
-                                    data=dict(Digits='2'),
-                                    follow_redirects=True)
-        twiml = ElementTree.fromstring(response.data)
-
-        logging.debug("twiml is {}".format(response))
-        assert not twiml.findall("./Say") is None
-        assert twiml.findall("./Gather")[0].attrib["action"] == url_for('planets')
 
     def test_post_to_menu_with_digit_other_than_1_or_2_redirects_to_welcome(self):
         """views - post to menu with non-recognized digit redirects to welcome"""

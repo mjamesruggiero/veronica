@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, request, session, flash
+import datetime
+from twilio.twiml.voice_response import VoiceResponse, Gather
 from veronica import app
-from twilio.twiml.voice_response import VoiceResponse
-
+from veronica import utils
 from veronica.view_helpers import twiml
 
 @app.route('/')
@@ -13,17 +14,24 @@ def home():
 @app.route('/veronica/welcome', methods=['POST'])
 def welcome():
     response = VoiceResponse()
-    with response.gather(numDigits=1,
-                         action=url_for('menu'),
-                         method='POST') as g:
-        g.play(url="http://howtodocs.s3.amazonaws.com/et-phone.mp3", loop=3)
+    gather = Gather(numDigits=1,
+                    action=url_for('menu'),
+                    method='POST')
+    message ='Please press 1 and then the pound sign for Bob, ' \
+              +'2 for Ted, 3 for Alice or 4 for Carol.'
+    gather.say(message,
+               voice='Alice',
+               language='en-US')
+    response.append(gather)
     return twiml(response)
 
 @app.route('/veronica/menu', methods=['POST'])
 def menu():
     selected_option = request.form['Digits']
-    option_actions = {'1': _give_instructions,
-                      '2': _list_planets}
+    option_actions = {'1': _bob,
+                      '2': _ted,
+                      '3': _alice,
+                      '4': _carol}
 
     if option_actions.has_key(selected_option):
         response = VoiceResponse()
@@ -33,57 +41,51 @@ def menu():
     return _redirect_welcome()
 
 
-@app.route('/veronica/planets')
-def planets():
-    selected_option = request.form['Digits']
-    option_actions = {'2': '+12024173378',
-                      '3': '+12027336386',
-                      '4': '+12027336637'}
-
-    if option_actions.has_key(selected_option):
-        response = VoiceResponse()
-        response.dial(option_actions[selected_option])
-        return twiml(response)
-    return _redirect_welcome()
-
 # ~~~~~~~~~~~~~~~~~~~
 #    p r i v a t e
 # ~~~~~~~~~~~~~~~~~~~
 
+def _human(response, name, birthdate):
+    fancy_date = utils.get_fancy_date(birthdate)
+    age = utils.get_age(birthdate,
+                        datetime.datetime(2017, 9, 02, 0 , 0))
 
-def _give_instructions(response):
-    response.say("To get to your extraction point, get on your bike " +
-                 "and go down the street. Then left down the alley. Avoid" +
-                 "the police cars and turn left into an uninhabited housing " +
-                 "development. Fly over the roadblock. Go past the moon. " +
-                 "Soon you will see the mother ship.",
+    text = "{n} has a birthday on {d}; {n} is {a}".format(n=name,
+                                                          d=fancy_date,
+                                                          a=age)
+
+    response.say(text,
                  voice='Alice',
-                 language='en-GB')
-    response.say("Thank you for calling the ET Phone Home Service - the " +
-                 "adventurous alien's first choice in intergalactic travel")
+                 language='en-US')
     response.hangup()
     return response
 
 
+def _bob(response):
+    bday = datetime.datetime(2009, 2, 23, 0, 0)
+    return _human(response, 'Bob', bday)
 
-def _list_planets(response):
-    with response.gather(numDigits=1,
-                         action=url_for('planets'),
-                         method='POST') as g:
-        g.say("To call the planet Broh doe As O G, press 2. " +
-              "To call the planet DuhGo bah, press 3. To call " +
-              "an oober asteroid to your location, press 4." +
-              "To go back to the main menu, press the star key.",
-              voice='alice',
-              language='en-GB',
-              loop=3)
 
-    return response
+def _alice(response):
+    bday = datetime.datetime(1994, 2, 6, 0, 0)
+    return _human(response, 'Alice', bday)
+
+
+def _ted(response):
+    bday = datetime.datetime(2006, 10, 14, 0, 0)
+    return _human(response, 'Ted', bday)
+
+
+def _carol(response):
+    bday = datetime.datetime(1969, 04, 21, 0, 0)
+    return _human(response, 'Carol', bday)
 
 
 def _redirect_welcome():
     response = VoiceResponse()
-    response.say("Returning to the main menu", voice='alice', language='en-GB')
+    response.say("Returning to the main menu",
+                 voice='alice',
+                 language='en-US')
     response.redirect(url_for('welcome'))
 
     return twiml(response)
