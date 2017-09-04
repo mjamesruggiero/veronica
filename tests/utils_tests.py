@@ -35,3 +35,19 @@ class UtilsTests(unittest.TestCase):
         sut = utils.get_age(birthdate, today)
         expected = "I cannot tell how old"
         self.assertEqual(sut, expected)
+
+    def test_env_vars_can_munge_into_map(self):
+        """utils - valid env var can be extracted into data"""
+        env_var = "Ted:1967-09-30,Alice:1969-04-21"
+        teds_date = datetime.datetime(1967, 9, 30, 0, 0)
+        alices_date = datetime.datetime(1969, 4, 21, 0, 0)
+
+        expected = {'1': ('Ted', teds_date),
+                    '2': ('Alice', alices_date)}
+        sut = utils.get_structure_from_env(env_var)
+        self.assertEqual(sut, expected)
+
+    def test_get_structure_from_env_handles_bad_env_var(self):
+        """utils - invalid age returns an error string"""
+        env_var = 'foo'
+        self.assertIsNone(utils.get_structure_from_env(env_var))

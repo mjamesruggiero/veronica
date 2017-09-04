@@ -1,5 +1,13 @@
 from datetime import datetime
 
+import sys
+import logging
+
+logging.basicConfig(
+    format="%(levelname)-10s %(asctime)s %(filename)s %(lineno)d %(message)s",
+    level=logging.DEBUG
+)
+
 def get_date_from_string(date_string):
     try:
         return datetime.strptime(date_string, '%Y-%m-%d')
@@ -18,3 +26,32 @@ def get_age(birth_date, more_recent_date):
         return "{y} years old".format(y=years)
     except AttributeError:
         return "I cannot tell how old"
+
+def get_records_from_env(env_var):
+    if env_var is None or len(env_var) == 0:
+        return None
+
+    rows = env_var.split(',')
+    cells = map(lambda x: x.split(':'), rows)
+
+    cell_lengths = set([len(c) for c in cells])
+    cells_are_uniform = len(cell_lengths) == 1
+    cell_length_is_two = list(cell_lengths)[-1] == 2
+
+    if cells_are_uniform and cell_length_is_two:
+        return cells
+    else:
+        return None
+
+
+def get_structure_from_env(env_var):
+    cells = get_records_from_env(env_var)
+    if cells is None:
+        return None
+    else:
+        formatted = map(lambda x: (x[0], get_date_from_string(x[1])), cells)
+
+        indices = map(str, range(1, len(formatted) + 1))
+        indexed = zip(indices, formatted)
+
+        return {i: r for (i, r) in indexed}
