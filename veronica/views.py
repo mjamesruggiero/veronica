@@ -17,8 +17,8 @@ def welcome():
     gather = Gather(numDigits=1,
                     action=url_for('menu'),
                     method='POST')
-    message ='Please press 1 and then the pound sign for Bob, ' \
-              +'2 for Ted, 3 for Alice or 4 for Carol.'
+    message ='Please press 1 and then the pound sign for Henry, ' \
+              +'2 for Jackson, 3 for Ivy or 4 for Kate.'
     gather.say(message,
                voice='Alice',
                language='en-US')
@@ -28,10 +28,10 @@ def welcome():
 @app.route('/veronica/menu', methods=['POST'])
 def menu():
     selected_option = request.form['Digits']
-    option_actions = {'1': _bob,
-                      '2': _ted,
-                      '3': _alice,
-                      '4': _carol}
+    option_actions = {'1': _henry,
+                      '2': _jackson,
+                      '3': _ivy,
+                      '4': _kate}
 
     if option_actions.has_key(selected_option):
         response = VoiceResponse()
@@ -47,12 +47,14 @@ def menu():
 
 def _human(response, name, birthdate):
     fancy_date = utils.get_fancy_date(birthdate)
-    age = utils.get_age(birthdate,
-                        datetime.datetime(2017, 9, 02, 0 , 0))
+    today = datetime.datetime.now()
 
-    text = "{n} has a birthday on {d}; {n} is {a}".format(n=name,
-                                                          d=fancy_date,
-                                                          a=age)
+    age = utils.get_age(birthdate, today)
+    until_next = utils.next_birthday(birthdate, today)
+    text = "{n} has a birthday on {d}; {n} is {a}. {u}".format(n=name,
+                                                               d=fancy_date,
+                                                               a=age,
+                                                               u=until_next)
 
     response.say(text,
                  voice='Alice',
@@ -61,24 +63,24 @@ def _human(response, name, birthdate):
     return response
 
 
-def _bob(response):
+def _henry(response):
     bday = datetime.datetime(2009, 2, 23, 0, 0)
-    return _human(response, 'Bob', bday)
+    return _human(response, 'Henry', bday)
 
 
-def _alice(response):
+def _ivy(response):
     bday = datetime.datetime(1994, 2, 6, 0, 0)
-    return _human(response, 'Alice', bday)
+    return _human(response, 'Ivy', bday)
 
 
-def _ted(response):
+def _jackson(response):
     bday = datetime.datetime(2006, 10, 14, 0, 0)
-    return _human(response, 'Ted', bday)
+    return _human(response, 'Jackson', bday)
 
 
-def _carol(response):
+def _kate(response):
     bday = datetime.datetime(1969, 04, 21, 0, 0)
-    return _human(response, 'Carol', bday)
+    return _human(response, 'Kate', bday)
 
 
 def _redirect_welcome():
