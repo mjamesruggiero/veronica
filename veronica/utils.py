@@ -55,3 +55,25 @@ def get_structure_from_env(env_var):
         indexed = zip(indices, formatted)
 
         return {i: r for (i, r) in indexed}
+
+
+def get_welcome_from_map(family):
+    press = 'Please press'
+    pound_sign = 'and then the pound sign'
+
+    # pop off first member;
+    # you need to copy the dict so that the
+    # original dict isn't altered
+    d = dict(family)
+    first_key = d.keys()[0]
+    first = "{number} {pound} for {person}".format(number=first_key,
+                                                   pound=pound_sign,
+                                                   person=d[first_key][0])
+    del d[first_key]
+    pieces = ['or {num} for {n}'.format(num=k, n=v[0]) \
+              for k, v in d.iteritems()]
+
+    final = '{press} {first} {rest}'.format(press=press,
+                                            first=first,
+                                            rest=' '.join(pieces))
+    return final

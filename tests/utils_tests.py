@@ -51,3 +51,20 @@ class UtilsTests(unittest.TestCase):
         """utils - invalid age returns an error string"""
         env_var = 'foo'
         self.assertIsNone(utils.get_structure_from_env(env_var))
+
+    def test_get_structure_from_env_handles_bad_env_var(self):
+        """utils - invalid age returns an error string"""
+        env_var = 'foo'
+        self.assertIsNone(utils.get_structure_from_env(env_var))
+
+    def test_get_welcome_from_dict_returns_sensible_menu_msg(self):
+        """utils - given a useful map, a useful message can be delivered"""
+        teds_date = datetime.datetime(1967, 9, 30, 0, 0)
+        alices_date = datetime.datetime(1969, 4, 21, 0, 0)
+
+        family = {'1': ('Bob', teds_date),
+                  '2': ('Alice', alices_date)}
+        sut = utils.get_welcome_from_map(family)
+        expected = 'Please press 1 and then the pound sign for Bob' \
+                   +' or 2 for Alice'
+        self.assertEqual(sut, expected)
