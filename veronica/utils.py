@@ -77,3 +77,22 @@ def get_welcome_from_map(family):
                                             first=first,
                                             rest=' '.join(pieces))
     return final
+
+
+def next_birthday(birthday, today):
+    try:
+        next_birthday = birthday.replace(year=today.year)
+    except ValueError:
+        # not a leapyear, no february 29th; use the day before
+        next_birthday = birthday.replace(day=28, year=today.year)
+
+    if next_birthday < today:  # next year
+        try:
+            next_birthday = birthday.replace(year=today.year + 1)
+        except ValueError:
+            # not a leapyear, no february 29th, use the day before
+            next_birthday = birthday.replace(day=28, year=today.year + 1)
+
+    difference = next_birthday - today
+    months, days = divmod(difference.days, 30)  # assume 30 days per month
+    return 'About {} months and {} days until their next birthday'.format(months, days)

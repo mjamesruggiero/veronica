@@ -68,3 +68,11 @@ class UtilsTests(unittest.TestCase):
         expected = 'Please press 1 and then the pound sign for Bob' \
                    +' or 2 for Alice'
         self.assertEqual(sut, expected)
+
+    def test_next_birthday_returns_sensible_msg_for_future_birthday(self):
+        """utils - happy path for future birthday message"""
+        teds_date = datetime.datetime(1967, 9, 30, 0, 0)
+        todays_date = datetime.datetime(2017, 9, 6, 0, 0)
+        sut = utils.next_birthday(teds_date, todays_date)
+        expected = 'About 0 months and 24 days until their next birthday'
+        self.assertEqual(sut, expected)
