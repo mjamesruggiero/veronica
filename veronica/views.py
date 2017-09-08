@@ -46,16 +46,16 @@ def menu():
 # ~~~~~~~~~~~~~~~~~~~
 
 def _human(response, name, birthdate):
-    fancy_date = utils.get_fancy_date(birthdate)
     today = datetime.datetime.now()
-
+    fancy_date = utils.get_fancy_date(birthdate)
     age = utils.get_age(birthdate, today)
-    until_next = utils.next_birthday(birthdate, today)
-    text = "{n} has a birthday on {d}; {n} is {a}. {u}".format(n=name,
-                                                               d=fancy_date,
-                                                               a=age,
-                                                               u=until_next)
 
+    # when's their birthday coming?
+    (months, days) = utils.get_next_birthday(birthdate, today)
+    until_next = utils.get_next_birthday_message(months, days)
+
+    # the full message
+    text = utils.get_birthday_message(name, fancy_date, age, until_next)
     response.say(text,
                  voice='Alice',
                  language='en-US')

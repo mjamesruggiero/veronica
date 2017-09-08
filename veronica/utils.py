@@ -79,7 +79,16 @@ def get_welcome_from_map(family):
     return final
 
 
-def next_birthday(birthday, today):
+def get_next_birthday_message(months, days):
+    "Returns formatted next birthday text"
+    return 'About {} months and {} days until their next birthday' \
+        .format(months, days)
+
+
+def get_next_birthday(birthday, today):
+    """Get months and days until the next birthday.
+    Approximate, as it does not count specific month durations,
+    but approximates to the nearest 30 days"""
     try:
         next_birthday = birthday.replace(year=today.year)
     except ValueError:
@@ -95,4 +104,11 @@ def next_birthday(birthday, today):
 
     difference = next_birthday - today
     months, days = divmod(difference.days, 30)  # assume 30 days per month
-    return 'About {} months and {} days until their next birthday'.format(months, days)
+    return (months, days)
+
+
+def get_birthday_message(name, fancy_birthdate, age, until_next_msg):
+    return "{n} has a birthday on {d}; {n} is {a}. {u}".format(n=name,
+                                                               d=fancy_birthdate,
+                                                               a=age,
+                                                               u=until_next_msg)

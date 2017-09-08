@@ -47,6 +47,11 @@ class UtilsTests(unittest.TestCase):
         sut = utils.get_structure_from_env(env_var)
         self.assertEqual(sut, expected)
 
+    def test_env_vars_can_handle_empty_values(self):
+        """utils - given empty value, get_structure_from_env returns None"""
+        sut = utils.get_structure_from_env('')
+        self.assertIsNone(sut)
+
     def test_get_structure_from_env_handles_bad_env_var(self):
         """utils - invalid age returns an error string"""
         env_var = 'foo'
@@ -69,10 +74,29 @@ class UtilsTests(unittest.TestCase):
                    +' or 2 for Alice'
         self.assertEqual(sut, expected)
 
-    def test_next_birthday_returns_sensible_msg_for_future_birthday(self):
-        """utils - happy path for future birthday message"""
+    def test_get_next_birthday_returns_sensible_msg_for_future_birthday(self):
+        """utils - happy path for future birthday"""
         teds_date = datetime.datetime(1967, 9, 30, 0, 0)
         todays_date = datetime.datetime(2017, 9, 6, 0, 0)
-        sut = utils.next_birthday(teds_date, todays_date)
+        sut = utils.get_next_birthday(teds_date, todays_date)
+        self.assertEqual(sut, (0, 24))
+
+    def test_get_next_birthday_handles_leap_year_coming_up(self):
+        """utils - can handle leap year a few days away"""
+        teds_date = datetime.datetime(1996, 2, 29, 0, 0)
+        todays_date = datetime.datetime(2017, 2, 18, 0, 0)
+        sut = utils.get_next_birthday(teds_date, todays_date)
+        self.assertEqual(sut, (0, 10))
+
+    def test_get_next_birthday_handles_leap_year_just_passed(self):
+        """utils - can handle leap year day just passed"""
+        teds_date = datetime.datetime(1996, 2, 29, 0, 0)
+        todays_date = datetime.datetime(2017, 3, 1, 0, 0)
+        sut = utils.get_next_birthday(teds_date, todays_date)
+        self.assertEqual(sut, (12, 4))
+
+    def test_next_birthday_message_formats_the_message(self):
+        """utils - happy path for next birthday messages"""
         expected = 'About 0 months and 24 days until their next birthday'
+        sut = utils.get_next_birthday_message(0, 24)
         self.assertEqual(sut, expected)
